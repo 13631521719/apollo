@@ -10,6 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>apollo-portal</artifactId>
 	<name>Apollo Portal</name>
+	<packaging>jar</packaging>
 	<properties>
 		<github.path>${project.artifactId}</github.path>
 		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
@@ -77,94 +78,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<executable>true</executable>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<finalName>${project.artifactId}-${project.version}-${package.environment}</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>src/assembly/assembly-descriptor.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>1.2.2</version>
-				<configuration>
-					<imageName>apolloconfig/${project.artifactId}</imageName>
-					<imageTags>
-						<imageTag>${project.version}</imageTag>
-						<imageTag>latest</imageTag>
-					</imageTags>
-					<dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
-					<serverId>docker-hub</serverId>
-					<resources>
-						<resource>
-							<targetPath>/</targetPath>
-							<directory>${project.build.directory}</directory>
-							<include>*.zip</include>
-						</resource>
-					</resources>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.google.code.maven-replacer-plugin</groupId>
-				<artifactId>replacer</artifactId>
-				<version>1.5.3</version>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<basedir>${project.build.directory}</basedir>
-					<includes>
-						<include>classes/static/*.html</include>
-						<include>classes/static/**/*.html</include>
-					</includes>
-					<replacements>
-						<replacement>
-							<token>\.css\"</token>
-							<value>.css?v=${maven.build.timestamp}\"</value>
-						</replacement>
-						<replacement>
-							<token>\.js\"</token>
-							<value>.js?v=${maven.build.timestamp}\"</value>
-						</replacement>
-					</replacements>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>ctrip</id>
-			<dependencies>
-				<dependency>
-					<groupId>com.ctrip.framework.apollo-sso</groupId>
-					<artifactId>apollo-sso-ctrip</artifactId>
-				</dependency>
-				<dependency>
-					<groupId>com.ctrip.framework.apollo-ctrip-service</groupId>
-					<artifactId>apollo-email-service</artifactId>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
+
+
 </project>

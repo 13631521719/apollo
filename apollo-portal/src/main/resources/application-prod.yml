@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: apollo-portal
+  profiles:
+    active: ${apollo_profile}
+  jpa:
+    properties:
+      hibernate:
+        query:
+          plan_cache_max_size: 192 # limit query plan cache max size
+
+server:
+  port: 8080
+  compression:
+    enabled: true
+  tomcat:
+    use-relative-redirects: true
+
+logging:
+  file: /app/logs/apollo-portal.log
+
+management:
+  health:
+    status:
+      order: DOWN, OUT_OF_SERVICE, UNKNOWN, UP
+
+
+spring.datasource.url: jdbc:mysql://100.77.21.6:3308/apollo_portal_db?characterEncoding=utf8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+spring.datasource.username: configopr
+spring.datasource.password: Bi#e8y3k
+spring.datasource.driver-class-name: com.mysql.jdbc.Driver
+jpa:
+  hibernate:
+    show-sql: true #打印执行的sql语句
+
+
+
+#uat_meta: http://100.69.68.2:7080
+prod.meta: http://127.0.0.1:80
+#prod.meta: http://100.77.20.15:7080
+META_SERVERS_OPTS: "-Ddev_meta=$dev_meta -Dfat_meta=$fat_meta -Duat_meta=$uat_meta -Dpro_meta=$pro_meta"
+
+

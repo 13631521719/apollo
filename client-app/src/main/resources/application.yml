@@ -1,16 +1,11 @@
-server:
-  port: 1010
-
-#app.id����ƥ��portal�е�Ӧ���Լ������ļ���Ĭ�϶�ȡapplication.properties
 app:
   id: 102321985531
 apollo:
-  meta: http://127.0.0.1:7080
+  meta: http://127.0.0.1:80
   bootstrap:
     enabled: true
     eagerLoad:
       enabled: true
-
 logging:
   level:
     com:

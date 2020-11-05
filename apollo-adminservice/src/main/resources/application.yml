@@ -2,7 +2,7 @@ spring:
   application:
     name: apollo-adminservice
   profiles:
-    active: uat
+    active: dev
 
 ctrip:
   appid: 100003172
@@ -10,7 +10,7 @@ ctrip:
 
   
 logging:
-  file: /opt/logs/100003172/apollo-adminservice.log
+  file: /app/logs/apollo-adminservice.log
 jpa:
     hibernate:
       show-sql: true #打印执行的sql语句

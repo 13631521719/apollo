@@ -1,8 +1,8 @@
 
 
 server:
-  port: 5080
-spring.datasource.url: jdbc:mysql://localhost:3306/ApolloConfigDB-prod?characterEncoding=utf8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
-spring.datasource.username: root
-spring.datasource.password: root
+  port: 80
+spring.datasource.url: jdbc:mysql://100.77.21.6:3308/apollo_config?characterEncoding=utf8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+spring.datasource.username: configopr
+spring.datasource.password: Bi#e8y3k
 spring.datasource.driver-class-name: com.mysql.jdbc.Driver

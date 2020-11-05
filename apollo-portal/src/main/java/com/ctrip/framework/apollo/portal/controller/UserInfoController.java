@@ -8,6 +8,7 @@ import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
+import com.ctrip.framework.apollo.portal.util.SpringContextUtil;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,7 +45,8 @@ public class UserInfoController {
     if (StringUtils.isContainEmpty(user.getUsername(), user.getPassword())) {
       throw new BadRequestException("Username and password can not be empty.");
     }
-
+   /* SpringSecurityUserService service=SpringContextUtil.getBean("SpringSecurityUserService",SpringSecurityUserService.class);
+    service.createOrUpdate(user);*/
     if (userService instanceof SpringSecurityUserService) {
       ((SpringSecurityUserService) userService).createOrUpdate(user);
     } else {

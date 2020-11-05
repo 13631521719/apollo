@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -28,6 +29,7 @@ import javax.annotation.PostConstruct;
 /**
  * @author lepdou 2017-03-10
  */
+//@Service("SpringSecurityUserService")
 public class SpringSecurityUserService implements UserService {
 
   private PasswordEncoder encoder = new BCryptPasswordEncoder();
