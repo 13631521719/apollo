@@ -202,11 +202,23 @@ public class AuthConfiguration {
     }
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
   /**
-   * spring.profiles.active = auth
+   * default profile
    */
   @Configuration
-  @Profile("auth")
+  @ConditionalOnMissingProfile({"ctrip", "auth", "ldap"})
   static class SpringSecurityAuthAutoConfiguration {
 
     @Bean
@@ -261,8 +273,9 @@ public class AuthConfiguration {
 
   }
 
-  @Order(99)
-  @Profile("auth")
+
+
+  @ConditionalOnMissingProfile({"auth", "ldap"})
   @Configuration
   @EnableWebSecurity
   @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -285,6 +298,74 @@ public class AuthConfiguration {
     }
 
   }
+
+
+  /**
+   * spring.profiles.active = auth
+   */
+  @Configuration
+  @Profile("auth")
+  static class DefaultAuthAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
+    public SsoHeartbeatHandler defaultSsoHeartbeatHandler() {
+      return new DefaultSsoHeartbeatHandler();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(UserInfoHolder.class)
+    public DefaultUserInfoHolder defaultUserInfoHolder() {
+      return new DefaultUserInfoHolder();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(LogoutHandler.class)
+    public DefaultLogoutHandler logoutHandler() {
+      return new DefaultLogoutHandler();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(UserService.class)
+    public UserService defaultUserService() {
+      return new DefaultUserService();
+    }
+  }
+
+  @Order(99)
+  @Profile("auth")
+  @Configuration
+  @EnableWebSecurity
+  @EnableGlobalMethodSecurity(prePostEnabled = true)
+  static class DefaultWebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+      http.csrf().disable();
+      http.headers().frameOptions().sameOrigin();
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /**
    * spring.profiles.active = ldap
@@ -336,7 +417,7 @@ public class AuthConfiguration {
       source.setBase(this.properties.getBase());
       source.setUrls(this.properties.determineUrls(this.environment));
       source.setBaseEnvironmentProperties(
-          Collections.unmodifiableMap(this.properties.getBaseEnvironment()));
+              Collections.unmodifiableMap(this.properties.getBaseEnvironment()));
       return source;
     }
 
@@ -362,8 +443,8 @@ public class AuthConfiguration {
     private final LdapExtendProperties ldapExtendProperties;
 
     public SpringSecurityLDAPConfigurer(final LdapProperties ldapProperties,
-        final LdapContextSource ldapContextSource,
-       final LdapExtendProperties ldapExtendProperties) {
+                                        final LdapContextSource ldapContextSource,
+                                        final LdapExtendProperties ldapExtendProperties) {
       this.ldapProperties = ldapProperties;
       this.ldapContextSource = ldapContextSource;
       this.ldapExtendProperties = ldapExtendProperties;
@@ -372,18 +453,18 @@ public class AuthConfiguration {
     @Bean
     public FilterBasedLdapUserSearch userSearch() {
       if (ldapExtendProperties.getGroup() == null || StringUtils
-          .isBlank(ldapExtendProperties.getGroup().getGroupSearch())) {
+              .isBlank(ldapExtendProperties.getGroup().getGroupSearch())) {
         FilterBasedLdapUserSearch filterBasedLdapUserSearch = new FilterBasedLdapUserSearch("",
-            ldapProperties.getSearchFilter(), ldapContextSource);
+                ldapProperties.getSearchFilter(), ldapContextSource);
         filterBasedLdapUserSearch.setSearchSubtree(true);
         return filterBasedLdapUserSearch;
       }
 
       FilterLdapByGroupUserSearch filterLdapByGroupUserSearch = new FilterLdapByGroupUserSearch(
-          ldapProperties.getBase(), ldapProperties.getSearchFilter(), ldapExtendProperties.getGroup().getGroupBase(),
-          ldapContextSource, ldapExtendProperties.getGroup().getGroupSearch(),
-          ldapExtendProperties.getMapping().getRdnKey(),
-          ldapExtendProperties.getGroup().getGroupMembership(),ldapExtendProperties.getMapping().getLoginId());
+              ldapProperties.getBase(), ldapProperties.getSearchFilter(), ldapExtendProperties.getGroup().getGroupBase(),
+              ldapContextSource, ldapExtendProperties.getGroup().getGroupSearch(),
+              ldapExtendProperties.getMapping().getRdnKey(),
+              ldapExtendProperties.getGroup().getGroupMembership(),ldapExtendProperties.getMapping().getLoginId());
       filterLdapByGroupUserSearch.setSearchSubtree(true);
       return filterLdapByGroupUserSearch;
     }
@@ -393,13 +474,13 @@ public class AuthConfiguration {
       BindAuthenticator bindAuthenticator = new BindAuthenticator(ldapContextSource);
       bindAuthenticator.setUserSearch(userSearch());
       DefaultLdapAuthoritiesPopulator defaultAuthAutoConfiguration = new DefaultLdapAuthoritiesPopulator(
-          ldapContextSource, null);
+              ldapContextSource, null);
       defaultAuthAutoConfiguration.setIgnorePartialResultException(true);
       defaultAuthAutoConfiguration.setSearchSubtree(true);
       // Rewrite the logic of LdapAuthenticationProvider with ApolloLdapAuthenticationProvider,
       // use userId in LDAP system instead of userId input by user.
       return new ApolloLdapAuthenticationProvider(
-          bindAuthenticator, defaultAuthAutoConfiguration, ldapExtendProperties);
+              bindAuthenticator, defaultAuthAutoConfiguration, ldapExtendProperties);
     }
 
     @Override
@@ -407,8 +488,8 @@ public class AuthConfiguration {
       http.csrf().disable();
       http.headers().frameOptions().sameOrigin();
       http.authorizeRequests()
-          .antMatchers(BY_PASS_URLS).permitAll()
-          .antMatchers("/**").authenticated();
+              .antMatchers(BY_PASS_URLS).permitAll()
+              .antMatchers("/**").authenticated();
       http.formLogin().loginPage("/signin").defaultSuccessUrl("/", true).permitAll().failureUrl("/signin?#/error").and()
               .httpBasic();
       http.logout().logoutUrl("/user/logout").invalidateHttpSession(true).clearAuthentication(true)
@@ -422,48 +503,4 @@ public class AuthConfiguration {
     }
   }
 
-  /**
-   * default profile
-   */
-  @Configuration
-  @ConditionalOnMissingProfile({"ctrip", "auth", "ldap"})
-  static class DefaultAuthAutoConfiguration {
-
-    @Bean
-    @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
-    public SsoHeartbeatHandler defaultSsoHeartbeatHandler() {
-      return new DefaultSsoHeartbeatHandler();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(UserInfoHolder.class)
-    public DefaultUserInfoHolder defaultUserInfoHolder() {
-      return new DefaultUserInfoHolder();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(LogoutHandler.class)
-    public DefaultLogoutHandler logoutHandler() {
-      return new DefaultLogoutHandler();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(UserService.class)
-    public UserService defaultUserService() {
-      return new DefaultUserService();
-    }
-  }
-
-  @ConditionalOnMissingProfile({"auth", "ldap"})
-  @Configuration
-  @EnableWebSecurity
-  @EnableGlobalMethodSecurity(prePostEnabled = true)
-  static class DefaultWebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-      http.csrf().disable();
-      http.headers().frameOptions().sameOrigin();
-    }
-  }
 }
