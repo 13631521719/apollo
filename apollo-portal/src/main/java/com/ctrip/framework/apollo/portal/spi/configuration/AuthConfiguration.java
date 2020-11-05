@@ -61,6 +61,8 @@ public class AuthConfiguration {
       "/vendor/**", "/styles/**", "/scripts/**", "/views/**", "/img/**", "/i18n/**", "/prefix-path",
       "/health"};
 
+
+
   /**
    * spring.profiles.active = ctrip
    */
